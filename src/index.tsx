@@ -12,7 +12,6 @@ import './assets/less/index.less';
 import createHistory from 'history/createBrowserHistory';
 //@ts-ignore
 import createLoading from 'dva-loading';
-//@ts-ignore
 import { AppContainer, setConfig } from 'react-hot-loader';
 setConfig({
     ignoreSFC: true,

@@ -6,7 +6,6 @@ import Layout from './routers/layout';
 import NoRights from './routers/interceptors/noRights';
 import NotFoundPage from './routers/interceptors/notFoundPage';
 import { RouteComponentProps } from 'dva/router';
-//@ts-ignore
 import { hot } from 'react-hot-loader/root';
 interface Props extends RouteComponentProps {
     getState: any;
