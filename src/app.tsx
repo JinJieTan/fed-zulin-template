@@ -6,11 +6,13 @@ import Layout from './routers/layout';
 import NoRights from './routers/interceptors/noRights';
 import NotFoundPage from './routers/interceptors/notFoundPage';
 import { RouteComponentProps } from 'dva/router';
+//@ts-ignore
+import { hot } from 'react-hot-loader/root';
 interface Props extends RouteComponentProps {
     getState: any;
     dispatch: any;
 }
-export default class App extends React.PureComponent<Props> {
+class App extends React.PureComponent<Props> {
     public render() {
         return (
             <Layout>
@@ -48,3 +50,4 @@ export default class App extends React.PureComponent<Props> {
         );
     }
 }
+export default hot(App);
