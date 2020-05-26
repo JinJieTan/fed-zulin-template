@@ -7,11 +7,9 @@ import NoRights from './routers/interceptors/noRights';
 import NotFoundPage from './routers/interceptors/notFoundPage';
 import { RouteComponentProps } from 'dva/router';
 import { hot } from 'react-hot-loader/root';
-interface Props extends RouteComponentProps {
-    getState: any;
-    dispatch: any;
-}
-class App extends React.PureComponent<Props> {
+import { SubscriptionAPI } from 'dva';
+interface Props extends RouteComponentProps {}
+class App extends React.PureComponent<Props & SubscriptionAPI> {
     public render() {
         return (
             <Layout>
