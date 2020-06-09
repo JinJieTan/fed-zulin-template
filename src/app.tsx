@@ -6,7 +6,7 @@ import Layout from './routers/layout';
 import NoRights from './routers/interceptors/noRights';
 import NotFoundPage from './routers/interceptors/notFoundPage';
 import { RouteComponentProps } from 'dva/router';
-import { hot } from 'react-hot-loader/root';
+import { hot } from 'react-hot-loader';
 import { SubscriptionAPI } from 'dva';
 interface Props extends RouteComponentProps {}
 class App extends React.PureComponent<Props & SubscriptionAPI> {
@@ -47,4 +47,4 @@ class App extends React.PureComponent<Props & SubscriptionAPI> {
         );
     }
 }
-export default hot(App);
+export default hot(module)(App);

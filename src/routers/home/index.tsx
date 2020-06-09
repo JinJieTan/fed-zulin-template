@@ -59,7 +59,7 @@ function App(props: Props) {
     return (
         <div>
             <h1>hooks:{value}</h1>
-            <Button onClick={onclick}>测试</Button>
+            <Button onClick={onclick}>测测</Button>
             <Button
                 onClick={() => {
                     props.history.replace('/');
