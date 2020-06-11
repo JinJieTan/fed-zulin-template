@@ -18,6 +18,7 @@ class App extends React.PureComponent<Props> {
     };
 
     public render() {
+        console.log(this.props, 'props');
         return (
             <div className="container">
                 <Demo test="1" />
