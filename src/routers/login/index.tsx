@@ -1,7 +1,6 @@
 import React from 'react';
 import Button from '../../components/button';
 import './index.less';
-import { Demo } from 'ykj-ui';
 import { History } from 'history';
 interface Props {
     readonly history: History;
@@ -18,10 +17,8 @@ class App extends React.PureComponent<Props> {
     };
 
     public render() {
-        console.log(this.props, 'props');
         return (
             <div className="container">
-                <Demo test="1" />
                 <div className={'login login_fade_in'}>
                     <div className="login_title">欢迎来到明源云空间-通用脚手架</div>
                     <Button text="进入Todo示例" isNormal={true} onClick={this.login} />
