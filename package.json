@@ -13,7 +13,7 @@
         "doc:build": "styleguidist build"
     },
     "keywords": [],
-    "author": "谭金杰 <tanjj02@mingyuanyun.com>",
+    "author": "谭金杰",
     "license": "ISC",
     "dependencies": {
         "@ant-design/icons": "^4.0.6",
