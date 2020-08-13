@@ -15,15 +15,22 @@ const loading = () => {
     return <Spin />;
 };
 
-const Init = Loadable({
-    loader: () => import('./routers/login'),
-    loading,
-});
-
-const Home = Loadable({
-    loader: () => import('./routers/home'),
-    loading,
-});
+const routes = [
+    {
+        path: '/init',
+        component: Loadable({
+            loader: () => import('./routers/login'),
+            loading,
+        }),
+    },
+    {
+        path: '/home',
+        component: Loadable({
+            loader: () => import('./routers/home'),
+            loading,
+        }),
+    },
+];
 
 class App extends React.PureComponent<RouteComponentProps & SubscriptionAPI> {
     public render() {
@@ -31,32 +38,10 @@ class App extends React.PureComponent<RouteComponentProps & SubscriptionAPI> {
             <Layout>
                 <Router history={this.props.history}>
                     <Switch>
-                        <Route
-                            path="/init"
-                            component={() => {
-                                return <Init history={this.props.history} />;
-                            }}
-                        />
-                        <Route
-                            path="/home"
-                            component={() => {
-                                return <Home history={this.props.history} />;
-                            }}
-                        />
-                        <Route
-                            path="/noright"
-                            component={() => {
-                                return <NoRights history={this.props.history} />;
-                            }}
-                        />
-                        <Route path="/404" component={NotFoundPage} />
-                        <Route
-                            path="/"
-                            component={() => {
-                                return <Init history={this.props.history} />;
-                            }}
-                        />
-                        <Redirect exact from="/*" to="/init?_smp=Rental.BillReminder" />
+                        {routes.map(item => {
+                            return <Route path={item.path} component={item.component} key={item.path} />;
+                        })}
+                        <Redirect exact from="/*" to="/init" />
                     </Switch>
                 </Router>
             </Layout>
