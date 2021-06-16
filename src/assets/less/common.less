@@ -1,0 +1,227 @@
+// 权限控制
+.f-hidden {
+    display: none !important;
+}
+
+@header: 56px;
+@pageHeaderHeight: 90px;
+@layoutPadding: 24px;
+@footer: 34px;
+@filter: 64px;
+@tableTh: 39px;
+
+.layout {
+    &-list {
+        height: 100%;
+        min-height: 100%;
+        padding: 24px 24px 0 24px;
+        .fed-table .ant-table-body {
+            padding-bottom: 16px;
+        }
+        > .ant-card {
+            height: 100%;
+            min-height: 100%;
+        }
+        .fed-pagination-container {
+            width: 100%;
+        }
+        .tabpane-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            > .fed-table {
+                // flex-grow: 1;
+            }
+        }
+        .filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px;
+            &-left {
+                display: flex;
+                align-items: flex-start;
+                & > .filter-item {
+                    align-items: flex-start;
+                    margin-right: 16px;
+                }
+            }
+            &-right {
+                .ant-btn:not(:first-of-type) {
+                    margin-left: 16px;
+                }
+            }
+        }
+    }
+    &-detail {
+        width: 100%;
+        height: calc(100% - @pageHeaderHeight);
+        max-height: calc(100% - @pageHeaderHeight);
+        padding: 24px 24px 0 24px;
+        > .ant-card {
+            height: 100%;
+        }
+        > .ant-spin-nested-loading {
+            height: 100%;
+            > .ant-spin-container {
+                height: 100%;
+            }
+        }
+        .ant-tabs-top > .ant-tabs-nav {
+            margin-bottom: 0;
+        }
+        & &-tab-content {
+            padding: 24px;
+            height: 100%; // 详情页没有tab直接是card的高度
+            overflow: auto;
+        }
+        &-tabs {
+            & .layout-detail-tab-content {
+                height: calc(100vh - 246px); // 详情页有tab的高度
+            }
+        }
+        &-card {
+            overflow-y: auto;
+            &-has-footer {
+                position: relative;
+                padding-bottom: 48px;
+            }
+        }
+        &-footer {
+            position: absolute;
+            bottom: 0;
+            left: 24px;
+            right: 24px;
+            background: #fff;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            &-content {
+                display: flex;
+                justify-content: flex-end;
+                padding: 8px 24px;
+
+                &-text-center {
+                    text-align: center;
+                }
+                &-text-right {
+                    text-align: right;
+                }
+            }
+        }
+        .ant-tabs .ant-tabs-bottom-content,
+        .ant-tabs .ant-tabs-top-content {
+            border: 1px solid #ebeff2;
+            border-top: 0;
+        }
+    }
+}
+.center-loading-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+.ant-table-form {
+    .ant-form-item {
+        margin-bottom: 0;
+    }
+}
+.btn-icon-only {
+    color: #bec3c7;
+}
+
+.c-text-gray {
+    color: #959799;
+}
+
+// casader选中的颜色设置主色
+.ant-cascader-menus li.ant-cascader-menu-item.ant-cascader-menu-item-active {
+    color: @primary-color;
+}
+.filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    &-left {
+        display: flex;
+        align-items: center;
+        & > .filter-item {
+            &:not(:first-of-type) {
+                margin-left: 16px;
+            }
+        }
+    }
+    &-right {
+        .ant-btn:not(:first-of-type) {
+            margin-left: 16px;
+        }
+    }
+}
+
+.main.pured {
+    .ant-page-header {
+        display: none;
+    }
+    .layout-detail {
+        padding: 0;
+    }
+}
+
+// 放在下拉框后面的button
+.ghost-btn.select-addon-after-btn {
+    position: absolute;
+    right: 10px;
+    top: 1px;
+    height: 28px;
+    line-height: 28px;
+    background-color: #fff;
+}
+
+// 清空 input 的右圆角
+.no-right-radius {
+    &.ant-input {
+        border-top-right-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+    }
+    .ant-input,
+    .ant-select-selector {
+        border-top-right-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+    }
+}
+// 清空 input 的左圆角
+.no-left-radius {
+    &.ant-input {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+    }
+    .ant-input,
+    .ant-select-selector {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+    }
+}
+
+// 合同列表多个资源浮层样式
+.contract-rooms-pop {
+    .ant-popover-inner-content {
+        max-width: 328px;
+        max-height: 374px;
+        overflow-y: auto;
+    }
+    .pop-par {
+        & + .pop-par {
+            margin-bottom: 0;
+            margin-top: 12px;
+        }
+    }
+}
