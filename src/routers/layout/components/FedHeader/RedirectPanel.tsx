@@ -34,7 +34,7 @@ export default class RedirectPanel extends Component<Props> {
 
     render() {
         const { onCancel, appList = [], title } = this.props;
-        const qualifiedAppNames = ['Rental', 'AssetCenter', 'Apartment', 'PropertyBase', 'MemberCenter', 'FangYi'];
+
         const allDisabled = appList.length === 0;
         return (
             <Modal
@@ -52,10 +52,6 @@ export default class RedirectPanel extends Component<Props> {
                     </p>
                     <div className="wrap">
                         {appList.map(item => {
-                            // 校验传入的模块名称是否合法
-                            if (!qualifiedAppNames.includes(item.key)) {
-                                return null;
-                            }
                             if (!item.current) {
                                 return (
                                     <a className="item hvr-float" href={item.url}>
