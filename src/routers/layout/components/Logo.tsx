@@ -35,8 +35,8 @@ const Logo = ({ collapsed = false, logoInfo }: Props) => {
         }) center center / contain no-repeat`,
     };
     return (
-        <div className={`sider-logo ${!logos.includes(logoInfo.logo) && !collapsed ? 'custom' : ''}`}>
-            <div className={`sider-logo__${collapsed ? 'small' : 'default'}`} style={style}></div>
+        <div className={`micro-sider-logo ${!logos.includes(logoInfo.logo) && !collapsed ? 'custom' : ''}`}>
+            <div className={`micro-sider-logo__${collapsed ? 'small' : 'default'}`} style={style}></div>
         </div>
     );
 };

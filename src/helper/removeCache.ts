@@ -1,4 +1,4 @@
-//@ts-nocheck
+import Cookie from '@/MemoryShare/cookie';
 export default function removeCache() {
     Cookie.remove('stageName');
     Cookie.remove('stageId');

@@ -1,11 +1,12 @@
-.main {
+.micro-main {
+    padding: 0 !important;
     &-header {
         z-index: 1;
-        box-shadow: 0 1px 5px 0 hsla(204, 2%, 59%, 0.2);
-        height: 56px;
-        background-color: #fff;
-        display: flex;
-        padding: 12px 16px;
+        box-shadow: 0 1px 5px 0 hsla(204, 2%, 59%, 0.2) !important;
+        height: 56px !important;
+        background-color: #fff !important;
+        display: flex !important;
+        padding: 12px 16px !important;
     }
     &-footer {
         height: 34px;
@@ -21,10 +22,32 @@
     }
     .main-content {
         flex: 1;
-        max-height: calc(100vh - 90px);
-
         -webkit-box-flex: 1;
         -ms-flex: 1;
         -webkit-flex: 1;
+    }
+    .ant-badge-count {
+        z-index: auto;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 6px;
+        color: #fff;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        white-space: nowrap;
+        text-align: center;
+        background: #eb3b3b;
+        border-radius: 8px;
+        box-shadow: unset;
+    }
+    .ant-badge-dot {
+        box-shadow: unset;
+    }
+    a:active,
+    a:hover,
+    a:focus {
+        text-decoration: none;
+        outline: 0;
     }
 }

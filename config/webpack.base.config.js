@@ -1,12 +1,11 @@
 const path = require('path');
 const htmlWebpackPlugin = require('html-webpack-plugin');
-const hardSourcePlugin = require('hard-source-webpack-plugin');
 const webpack = require('webpack');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 module.exports = {
     entry: {
-        app: ['@babel/polyfill', 'react-hot-loader/patch', path.resolve(__dirname, '../src/index.tsx')],
+        app: ['@babel/polyfill', path.resolve(__dirname, '../src/index.tsx')],
     },
     output: {
         filename: '[name].[hash:8].js',
@@ -26,7 +25,6 @@ module.exports = {
                                     exclude: ['node_modules'],
                                     //jsx语法
                                     cacheDirectory: true,
-                              
                                 },
                             },
                             {
@@ -48,9 +46,6 @@ module.exports = {
                                 options: {
                                     importLoaders: 1,
                                 },
-                            },
-                            {
-                                loader: 'postcss-loader',
                             },
                             {
                                 loader: 'less-loader',
@@ -95,7 +90,6 @@ module.exports = {
             '@m': path.resolve(__dirname, '../src/model'),
             '@s': path.resolve(__dirname, '../src/services'),
             '@t': path.resolve(__dirname, '../src/types'),
-            'react-dom': '@hot-loader/react-dom',
         },
     },
     optimization: {

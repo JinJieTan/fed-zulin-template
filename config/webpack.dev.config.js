@@ -1,8 +1,8 @@
 const merge = require('webpack-merge');
 const base_config = require('./webpack.base.config');
 const proxyConfig = require('./proxyConfig');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const webpack = require('webpack');
+const hardSourcePlugin = require('hard-source-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const dev_config = {
     mode: 'development',
     devServer: {
@@ -30,7 +30,8 @@ const dev_config = {
     },
     plugins: [
         // new webpack.HotModuleReplacementPlugin(),
-        //  new BundleAnalyzerPlugin()
+        new hardSourcePlugin(),
+        new ReactRefreshWebpackPlugin(),
     ],
 };
 

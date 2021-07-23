@@ -1,10 +1,8 @@
 import Cookie from 'js-cookie';
 import { writeCssInStyles } from './cssUtils';
 import { find } from 'lodash';
-import removeCahce from './removeCache';
-import { getKey } from '../components/FedMenu/menuRoutes';
+import { getActiveMenu } from '@/routers/layout/components/FedMenu/menuRoutes';
 import config from '../config';
-
 const { DEV, serverPort } = config;
 const appNames = [
     'Rental',
@@ -34,7 +32,7 @@ export function handleBaseInfo(payload: any) {
             children: [],
         });
     }
-    const pathKey = getKey(location.pathname);
+    const code = getActiveMenu(location.pathname).code;
     let str = '';
     //获取url的_smp参数
     const _smpParms = (Cookie.get('locationSearch_smp') || '').split('.')[0];
@@ -45,7 +43,7 @@ export function handleBaseInfo(payload: any) {
             }
             //#import   由于路由在多个地方跳转  现在必须保证的为 路由的前缀是唯一的 也就是在constans中配置的为  get到的 key  一直
             if (!appCode) {
-                if (!appCode && functions[k].func_code && functions[k].func_code.indexOf(pathKey) !== -1) {
+                if (!appCode && functions[k].func_code && functions[k].func_code.indexOf(code) !== -1) {
                     appCode = functions[k].app_code;
                 }
             }
@@ -67,14 +65,18 @@ export function handleBaseInfo(payload: any) {
                         if (DEV) {
                             //开发结算设置对应的端口号
                             if (!functions[k].func_url) functions[k].func_url = '';
+                            const urlReg = new RegExp(`http(s)?://.+?(middleground|static|pact|fed)(\/.*)`);
                             // is_access_fun = 1,或者当前项目的标识与url _smp参数不一致也需要跳转 时表示需要外链
                             functions[k].func_url =
                                 +functions[k].is_access_fun === 1
                                     ? functions[k].func_url
-                                    : functions[k].func_url.replace(
-                                          location.hostname,
-                                          `${location.hostname}:${serverPort}`
-                                      );
+                                    : functions[k].func_url.replace(urlReg, '/$2$3');
+                        } else {
+                            const origin = window.location.origin.replace(/(https\:\/\/rental)\d(.*)/, '$1$2');
+                            functions[k].func_url =
+                                +functions[k].is_access_fun === 1
+                                    ? functions[k].func_url
+                                    : functions[k].func_url.replace(`${origin}`, '');
                         }
                         nav.children.push(functions[k]);
                     } else {
@@ -82,7 +84,8 @@ export function handleBaseInfo(payload: any) {
                     }
                 }
                 //设置对应的权限的css
-                functions[k].actions.forEach((action: any) => {
+                // eslint-disable-next-line no-loop-func
+                functions[k].actions.forEach(function(action: any) {
                     if (action.element_id !== null && action.element_id !== '') {
                         functions[k][action.element_id] = true;
                         str += `.${action.element_id},`;
@@ -115,8 +118,10 @@ export function handleBaseInfo(payload: any) {
     }
     if (payload.logo_info.icon) {
         //替换数据
-        // @ts-ignore
-        window.icon.setAttribute('href', payload.logo_info.icon);
+        const icon = document.querySelector('#icon') as any;
+        if (icon && icon.href) {
+            icon.href = payload.logo_info.icon;
+        }
     }
     if (payload.logo_info.title) {
         //替换数据

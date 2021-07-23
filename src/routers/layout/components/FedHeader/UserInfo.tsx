@@ -5,56 +5,54 @@
 import React from 'react';
 import './UserInfo.less';
 import { Dropdown, Menu } from 'antd';
-import Icon from '@ant-design/icons';
 import FedIcon from '@c/FedIcon';
-import { Props, AppInfo } from './interface';
 import { loginOut } from '@s/app';
-import Cookie from 'js-cookie';
+import Cookie from '@/MemoryShare/cookie';
 import removeCache from '@/helper/removeCache';
+import { AppListItem, AccountInfo, CurrentAppInfo } from '../../type';
 
+interface Props {
+    accountInfo: AccountInfo;
+    currentAppInfo: CurrentAppInfo;
+    appList: AppListItem[];
+}
 export default class UserInfo extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
     }
 
     render() {
-        const { user, personalCenterUrl, appList } = this.props;
-        const renderNavs: AppInfo[] = (appList || []).filter(item =>
-            ['ManagementCenter', 'OperationCenter'].includes(item.key)
+        const { accountInfo, currentAppInfo, appList } = this.props;
+        const renderNavs = (appList || []).filter(item =>
+            ['ManagementCenter', 'OperationCenter'].includes(item.app_code)
         );
         const iconStyle = { fontSize: '20px', marginRight: '18px' };
         const overlayClassName = 'header-right-dropdown';
         const menu = (
             <Menu>
                 <Menu.Item key="0">
-                    <div className="user-info">
+                    <a className="user-info" href={currentAppInfo.passwordUrl} rel="noopener noreferrer">
                         <FedIcon type="icon-icn_avatar" className="icon-avatar" />
                         <div className="info">
-                            <div>
-                                <a href={personalCenterUrl}>{user && user.display_name}</a>
-                            </div>
-                            <span>{user.tenant_name || user.organ_name}</span>
+                            <div>{accountInfo.display_name}</div>
+                            <span>{accountInfo.tenant_code}</span>
                         </div>
-                    </div>
+                    </a>
                 </Menu.Item>
                 <Menu.Divider />
-                {renderNavs.length
-                    ? renderNavs.map((item: AppInfo) => (
-                          <Menu.Item key="1">
-                              <a className="item" href={item.url} rel="noopener noreferrer" key={item.key}>
-                                  <FedIcon
-                                      type={
-                                          item.key === 'ManagementCenter'
-                                              ? 'icon-icn_navi_manage'
-                                              : 'icon-icn_navi_team'
-                                      }
-                                      style={iconStyle}
-                                  />
-                                  {item.name}
-                              </a>
-                          </Menu.Item>
-                      ))
-                    : null}
+                {renderNavs.map(item => (
+                    <Menu.Item key={item.app_code}>
+                        <a className="item" href={item.site_url} rel="noopener noreferrer">
+                            <FedIcon
+                                type={
+                                    item.app_code === 'ManagementCenter' ? 'icon-icn_navi_manage' : 'icon-icn_navi_team'
+                                }
+                                style={iconStyle}
+                            />
+                            {item.app_name}
+                        </a>
+                    </Menu.Item>
+                ))}
                 <Menu.Divider />
                 <Menu.Item key="2">
                     <div className="item logout" onClick={this.loginOut}>
@@ -82,11 +80,11 @@ export default class UserInfo extends React.Component<Props> {
     }
 
     loginOut = () => {
-        const { logoutUrl } = this.props;
+        const { currentAppInfo } = this.props;
         loginOut();
         Cookie.remove('gr_user_id');
         Cookie.remove('RENTALCENTER');
         removeCache();
-        window.location.href = logoutUrl;
+        window.location.href = currentAppInfo.logoutUrl;
     };
 }

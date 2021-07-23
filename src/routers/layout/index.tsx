@@ -1,30 +1,19 @@
-import React, { ReactElement } from 'react';
-// @ts-ignore
-// import myWebLogTracker from 'fast-tracker';
-// @ts-ignore
-import * as queryString from 'query-string';
-import { Layout as AntLayout, message, Spin } from 'antd';
+import React from 'react';
+import queryString from 'query-string';
+import { Layout as AntLayout } from 'antd';
 import FedHeader from './components/FedHeader';
 import FedMenu from './components/FedMenu';
 import BizLoading from './components/BizLoading';
 import CollapseItem from './components/CollapseItem';
 import Logo from './components/Logo';
-import { getHomeBaseInfo, getWorkflowTodo, getWHWorkflowTodo } from '@s/app';
-import { find } from 'lodash';
-// import { __canvasWM } from '../../helper/watermark';
-import config from '../../config';
-import { handleBaseInfo } from '../../helper/handleBaseInfo';
-import { AppInfo, User, whWorkFlowInfo } from './components/FedHeader/interface';
+import { __canvasWM } from '../../helper/watermark';
 import { watchUA } from '@/helper/commonUtils';
 import * as H from 'history';
 import FedCenterLoading from '@c/FedCenterLoading';
-
+import { UserService, UserEntity, UserEntityMethod } from '@/routers/layout/domain/application';
 import './index.less';
-import { connect } from 'dva';
 
 const { Header, Sider, Content, Footer } = AntLayout;
-
-const { DEV } = config;
 interface dispatchArg {
     type: string;
     data: any;
@@ -32,94 +21,50 @@ interface dispatchArg {
 interface Props {
     children: React.ReactNode;
     dispatch(data: dispatchArg): void;
-    location: H.Location;
-}
-
-interface LogoInfo {
-    icon: string;
-    logo: string;
-    title: string;
+    location: any;
 }
 interface State {
+    /**
+     * 是否已经获取用户信息
+     */
     inited: boolean;
+    /**
+     * 菜单是否折叠
+     */
     collapsed: boolean;
-    appList: AppInfo[];
-    user: User;
-    passwordUrl: string;
-    logoutUrl: string;
-    logoInfo: LogoInfo;
-    workflow: object;
-    appCode: string;
-    is_enabled_wh_workflow: boolean;
+    /**
+     * 是否是只显示内容
+     */
     is_pured: boolean;
-    whWorkFlowInfo: whWorkFlowInfo;
-    wh_workflow_url: string;
+    /**
+     * 用户信息
+     */
+    userInfo: UserEntity;
 }
 const UA = watchUA();
 class Layout extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        const query = queryString.parse((location as any).search);
+        const query = queryString.parse(window.location.search);
         this.state = {
             inited: false,
             collapsed: false,
-            appList: [],
-            user: {
-                account: '',
-                displayName: '',
-                display_name: '',
-                key: '',
-                org_id: '',
-                organ_name: '',
-                tenantCode: '',
-                tenant_code: '',
-                tenant_name: '',
-                user_id: '',
-            },
-            passwordUrl: '',
-            logoutUrl: '',
-            logoInfo: {
-                icon: '',
-                logo: '',
-                title: '',
-            },
-            workflow: {},
-            appCode: '',
-            is_enabled_wh_workflow: false,
-            wh_workflow_url: '',
             is_pured: this.hasIsPured(query),
-            whWorkFlowInfo: {
-                todo_number: 0,
-            },
+            userInfo: UserEntityMethod.getEmptyUserInfo(),
         };
-        this.props.dispatch({ type: 'main/initBaseInfo', data: Object.assign({}, this.state) });
     }
 
-    async componentDidMount() {
-        await this.getBaseInfo();
+    componentDidMount() {
+        this.getBaseInfo();
     }
     public render() {
         const { children, location } = this.props;
-        const {
-            inited,
-            collapsed,
-            logoInfo,
-            appList = [],
-            is_enabled_wh_workflow,
-            wh_workflow_url,
-            whWorkFlowInfo,
-            workflow,
-            user,
-            passwordUrl,
-            logoutUrl,
-            appCode,
-            is_pured,
-        } = this.state;
-        const nav = find(appList, ['key', appCode]);
+        const { inited, collapsed, is_pured, userInfo } = this.state;
+        const { currentAppInfo } = userInfo;
         return (
             <AntLayout
                 style={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}
-                className={`main ${is_pured ? 'pured' : ''}`}
+                className={`micro-main ${is_pured ? 'pured' : ''}`}
             >
                 {!is_pured ? (
                     <Sider
@@ -130,7 +75,7 @@ class Layout extends React.Component<Props, State> {
                         onCollapse={this.onCollapse}
                         width="184"
                     >
-                        <Logo collapsed={collapsed} logoInfo={logoInfo} />
+                        <Logo collapsed={collapsed} logoInfo={currentAppInfo.logo_info} />
                         <div
                             style={{ maxHeight: 'calc(100vh - 104px)', overflowY: 'scroll' }} // 56 + 48
                             className="hide-scrollbar"
@@ -138,61 +83,51 @@ class Layout extends React.Component<Props, State> {
                             <FedMenu
                                 pathname={location?.pathname}
                                 collapsed={collapsed}
-                                menuList={(nav && nav.children) || []}
-                                workflow={workflow}
+                                menuList={userInfo.currentAppMenuList}
+                                workflow={userInfo.workflowToDoStats}
                             />
                         </div>
                     </Sider>
                 ) : null}
                 <AntLayout>
                     {!is_pured ? (
-                        <Header className="main-header">
+                        <Header className="micro-main-header">
                             <FedHeader
-                                is_enabled_wh_workflow={is_enabled_wh_workflow}
-                                wh_workflow_url={wh_workflow_url}
-                                whWorkFlowInfo={whWorkFlowInfo}
-                                appList={appList}
-                                appCode={appCode}
-                                user={user}
-                                logoutUrl={logoutUrl}
-                                personalCenterUrl={passwordUrl}
+                                whWorkflowToDoStats={userInfo.whWorkflowToDoStats}
+                                appList={userInfo.appList}
+                                currentAppInfo={currentAppInfo}
+                                accountInfo={userInfo.accountInfo}
                             />
                         </Header>
                     ) : null}
                     <Content
-                        style={{
-                            overflowX: 'auto',
-                            overflowY: 'hidden',
-                            maxHeight: UA ? 'calc(100vh - 160px)' : 'calc(100vh - 90px)',
-                        }}
+                        style={
+                            is_pured
+                                ? {}
+                                : {
+                                      overflowX: 'auto',
+                                      overflowY: 'hidden',
+                                      maxHeight: UA ? 'calc(100vh - 160px)' : 'calc(100vh - 90px)',
+                                  }
+                        }
                         className="main-content"
-                        id="antContentArea"
                     >
                         {/* 1080px - 200px(/80px) = 880(/1000px) */}
                         <div style={{ minWidth: `${collapsed ? '1000px' : '896px'}`, height: '100%' }}>
                             {inited ? children : <FedCenterLoading />}
                         </div>
-                        <BizLoading />
+                        {/* <BizLoading /> */}
                     </Content>
                     {!is_pured ? (
-                        <Footer className="main-footer">
-                            Copyright © {new Date().getFullYear()} 明源云空间 版权所有 鄂ICP备15101856号-1
-                        </Footer>
+                        // <Footer className="main-footer">
+                        //     Copyright © {new Date().getFullYear()} 明源云空间 版权所有 鄂ICP备15101856号-1
+                        // </Footer>
+                        <div style={{ height: 12 }}></div>
                     ) : null}
                 </AntLayout>
             </AntLayout>
         );
     }
-
-    // // 注册天眼
-    // initTracker = (user: User) => {
-    //     const trackerInstance = myWebLogTracker({
-    //         app_code: 'rental_web',
-    //         product_code: location.href.indexOf('https://rental.myfuwu.com.cn') > -1 ? 'rental' : 'rental_test',
-    //         include_search: true, // 上报search参数
-    //     });
-    //     trackerInstance.registUser({ tenant_code: user.tenant_code, user_account: user.account });
-    // };
 
     // 判断url上是否含有pured参数
     hasIsPured = (query: any) => {
@@ -200,38 +135,75 @@ class Layout extends React.Component<Props, State> {
         return val === null || val === '' || (val && val.length > 0) || false;
     };
 
+    /**
+     * 获取用户信息
+     */
     getBaseInfo = async () => {
-        const query = queryString.parse((location as any).search);
-        const smp = (query._smp || '').split('.')[0];
-        query._smp = smp;
-        const { data } = await getHomeBaseInfo(query);
-
-        // // 增加水印
-        // if (data?.is_enabled_watermark) {
-        //     __canvasWM({
-        //         content: `${data?.user?.tenant_code || ''} ${data?.user?.account || ''}`,
-        //     });
-        // }
-
-        const props: any = handleBaseInfo(data);
-        this.setState({ ...props, inited: true, is_enabled_wh_workflow: data.is_enabled_wh_workflow });
-        // 将全局基本信息放入到store中, 其它地方可能用到
-        this.props.dispatch({
-            type: 'main/initBaseInfo',
-            data: props,
-        });
-        // this.initTracker(props.user);
-        const { data: workflowData } = await getWorkflowTodo();
-        let { data: whWorkFlowInfo } = await getWHWorkflowTodo();
-        this.setState({ ...workflowData, whWorkFlowInfo }, () => {
-            this.props.dispatch({ type: 'main/initBaseInfo', data: Object.assign({}, this.state) });
-        });
+        const res = await UserService.fetchHomeBaseInfo();
+        if (res?.result) {
+            this.setState({ inited: true, userInfo: res.userInfo }, () => {
+                this.getTodo();
+                this.showWatermark();
+                this.updateIconInfo();
+            });
+        }
     };
 
+    /**
+     * 获取内部审批流和武汉审批流待办数量
+     */
+    getTodo = async () => {
+        const workflowTodoRes = await UserService.fetchWorkflowTodo();
+        const wHWorkflowTodoRes = await UserService.fetchWHWorkflowTodo();
+        const { userInfo } = this.state;
+        if (workflowTodoRes?.result) {
+            userInfo.workflowToDoStats = workflowTodoRes.data.workflow;
+        }
+        if (wHWorkflowTodoRes?.result) {
+            userInfo.whWorkflowToDoStats = wHWorkflowTodoRes.data;
+        }
+        this.setState({ userInfo: { ...userInfo } });
+    };
+
+    /**
+     * 菜单折叠和展开状态切换
+     * @param collapsed
+     */
     onCollapse = (collapsed: boolean) => {
-        this.setState({ collapsed }, () => {
-            this.props.dispatch({ type: 'main/initBaseInfo', data: Object.assign({}, this.state) });
-        });
+        this.setState({ collapsed });
+    };
+
+    /**
+     * 显示水印
+     */
+    showWatermark = () => {
+        const { userInfo } = this.state;
+        const { currentAppInfo, accountInfo } = userInfo;
+        const query = queryString.parse(window.location.search);
+        // 全局配置开启了水印，同时不是在审批模式下
+        if (currentAppInfo.is_enabled_watermark && !this.hasIsPured(query)) {
+            __canvasWM({
+                content: `${accountInfo.tenant_code || ''} ${accountInfo.account || ''}`,
+            });
+        }
+    };
+
+    /**
+     * 更新 icon 信息
+     */
+    updateIconInfo = () => {
+        const { userInfo } = this.state;
+        const { currentAppInfo } = userInfo;
+        if (currentAppInfo.logo_info.icon) {
+            const icon: HTMLLinkElement | null = document.querySelector('#icon');
+            if (icon) {
+                icon.href = currentAppInfo.logo_info.icon;
+            }
+        }
+        if (currentAppInfo.logo_info.title) {
+            // 更新页面 title
+            window.document.title = currentAppInfo.logo_info.title;
+        }
     };
 }
 export default Layout;

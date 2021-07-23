@@ -2,11 +2,11 @@ import React, { Component, MouseEventHandler } from 'react';
 import { Modal } from 'antd';
 import FedIcon from '@c/FedIcon';
 import './RedirectPanel.less';
-import { AppInfo, MapOptions } from './interface';
+import { AppListItem, AppCodeIconMapOptions } from '../../type';
 
 interface Props {
     title: string;
-    appList: AppInfo[];
+    appList: AppListItem[];
     onCancel: MouseEventHandler;
 }
 
@@ -16,8 +16,8 @@ export default class RedirectPanel extends Component<Props> {
         this.state = {};
     }
 
-    getIconType = (appName: keyof MapOptions) => {
-        const mapObj: MapOptions = {
+    getIconType = (appName: keyof AppCodeIconMapOptions) => {
+        const mapObj = {
             Apartment: 'icon-icn_apartment',
             AssetCenter: 'icon-icn_asset',
             ManagementCenter: 'icon-icn_manage',
@@ -29,12 +29,11 @@ export default class RedirectPanel extends Component<Props> {
             Rental: 'icon-icn_rent',
             FangYi: 'icon-icn_FangYi',
         };
-        return mapObj[appName];
+        return mapObj[appName] || 'icon-icn_operate';
     };
 
     render() {
         const { onCancel, appList = [], title } = this.props;
-
         const allDisabled = appList.length === 0;
         return (
             <Modal
@@ -51,17 +50,19 @@ export default class RedirectPanel extends Component<Props> {
                         {allDisabled ? '暂无权限，如需使用请联系管理员' : `即将离开${title}，请选择跳转模块`}
                     </p>
                     <div className="wrap">
-                        {appList.map(item => {
-                            if (!item.current) {
-                                return (
-                                    <a className="item hvr-float" href={item.url}>
-                                        <FedIcon className="icon-app" type={this.getIconType(item.key)} />
-                                        <span className="text">{item.name}</span>
-                                    </a>
-                                );
-                            }
-                            return null;
-                        })}
+                        {appList.map(item => (
+                            <a className="item hvr-float" href={item.site_url}>
+                                {item.icon_url ? (
+                                    <img src={item.icon_url} alt={item.app_name} className="icon-app" />
+                                ) : (
+                                    <FedIcon
+                                        className="icon-app"
+                                        type={this.getIconType(item.app_code as keyof AppCodeIconMapOptions)}
+                                    />
+                                )}
+                                <span className="text">{item.app_name}</span>
+                            </a>
+                        ))}
                     </div>
                 </div>
             </Modal>
